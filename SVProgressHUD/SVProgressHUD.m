@@ -196,6 +196,10 @@ static const CGFloat SVProgressHUDLabelSpacing = 8.0f;
     [self sharedView].hapticsEnabled = hapticsEnabled;
 }
 
++ (void)setLoadingImageView:(UIImageView*) loadingImageView {
+    [self sharedView].loadingImageView = loadingImageView;
+}
+
 #pragma mark - Show Methods
 
 + (void)show {
@@ -1088,7 +1092,7 @@ static const CGFloat SVProgressHUDLabelSpacing = 8.0f;
         indefiniteAnimatedView.strokeColor = self.foregroundColorForStyle;
         indefiniteAnimatedView.strokeThickness = self.ringThickness;
         indefiniteAnimatedView.radius = self.statusLabel.text ? self.ringRadius : self.ringNoTextRadius;
-    } else {
+    } else if (self.defaultAnimationType == SVProgressHUDAnimationTypeNative){
         // Check if spinner exists and is an object of different class
         if(_indefiniteAnimatedView && ![_indefiniteAnimatedView isKindOfClass:[UIActivityIndicatorView class]]){
             [_indefiniteAnimatedView removeFromSuperview];
@@ -1102,6 +1106,15 @@ static const CGFloat SVProgressHUDLabelSpacing = 8.0f;
         // Update styling
         UIActivityIndicatorView *activityIndicatorView = (UIActivityIndicatorView*)_indefiniteAnimatedView;
         activityIndicatorView.color = self.foregroundColorForStyle;
+    }
+    else {
+        if(_indefiniteAnimatedView && ![_indefiniteAnimatedView isKindOfClass:[UIImageView class]]){
+            [_indefiniteAnimatedView removeFromSuperview];
+            _indefiniteAnimatedView = nil;
+        }
+        if(!_indefiniteAnimatedView){
+            _indefiniteAnimatedView = self.loadingImageView;
+        }
     }
     [_indefiniteAnimatedView sizeToFit];
     
@@ -1528,6 +1541,10 @@ static const CGFloat SVProgressHUDLabelSpacing = 8.0f;
 
 - (void)setFadeOutAnimationDuration:(NSTimeInterval)duration {
     if (!_isInitializing) _fadeOutAnimationDuration = duration;
+}
+    
+- (void)setLoadingImageView:(UIImageView*) loadingImageView {
+    if (!_isInitializing) _loadingImageView = loadingImageView;
 }
 
 - (void)setMaxSupportedWindowLevel:(UIWindowLevel)maxSupportedWindowLevel {
