@@ -758,7 +758,8 @@ static const CGFloat SVProgressHUDLabelSpacing = 8.0f;
 
 - (void)showProgress:(float)progress status:(NSString*)status {
     __weak SVProgressHUD *weakSelf = self;
-    [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+//    [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+    dispatch_async(dispatch_get_main_queue(), ^{
         __strong SVProgressHUD *strongSelf = weakSelf;
         if(strongSelf){
             if(strongSelf.fadeOutTimer) {
@@ -843,7 +844,7 @@ static const CGFloat SVProgressHUDLabelSpacing = 8.0f;
             [strongSelf.hapticGenerator prepare];
 #endif
         }
-    }];
+    });
 }
 
 - (void)showImage:(UIImage*)image status:(NSString*)status duration:(NSTimeInterval)duration {
